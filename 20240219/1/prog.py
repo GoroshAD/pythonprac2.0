@@ -40,7 +40,29 @@ match len(sys.argv):
                                     kind = 'tree'
                                 case b'blob':
                                     kind = 'blob'
-                            print(f"{SHIFT}{kind} {num.hex()} {tname.decode()}")
+                            print(f"{SHIFT}{kind} {num.hex()} {tname.decode()}\n")
 
+                commit_arr = []
+                for store in glob.iglob(path + "/.git/objects/??/*"):
+                    header, body, kind, size = desc(store)
+                    if kind == b'commit':
+                        out = body.decode().replace('\n', '\n' + SHIFT)
+                        commit_arr.append((out, out.split('\n')[2].split()[3], store))
+                commit_arr.sort(key = lambda x : x[1])
 
-
+                for i in commit_arr:
+                    print(f"TREE for commit {i[2].split('/')[-2]+i[2].split('/')[-1]}")
+                    tree_id = i[0].split()[1]
+                    for store in glob.iglob(path + "/.git/objects/??/*"):
+                        if basename(dirname(store)) + basename(store) == tree_id:
+                            header, tail, kind, size = desc(store)
+                            while tail:
+                                treeobj, _, tail = tail.partition(b'\x00')
+                                tmode, tname = treeobj.split()
+                                num, tail = tail[:20], tail[20:]
+                                match kind:
+                                    case b'tree':
+                                        kind = 'tree'
+                                    case b'blob':
+                                        kind = 'blob'
+                                print(f"{kind} {num.hex()} {tname.decode()}")
