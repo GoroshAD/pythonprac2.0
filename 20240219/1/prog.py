@@ -20,7 +20,7 @@ match len(sys.argv):
         path, branch = sys.argv[1:]
         for i in glob.iglob(path + "/.git/refs/heads/*"):
             if branch == basename(i):
-                with open(i, "r") as f:
+                '''with open(i, "r") as f:
                     head_id = f.read().split()[0]
                 for store in glob.iglob(path + "/.git/objects/??/*"):
                     if basename(dirname(store)) + basename(store) == head_id:
@@ -40,7 +40,7 @@ match len(sys.argv):
                                     kind = 'tree'
                                 case b'blob':
                                     kind = 'blob'
-                            print(f"{SHIFT}{kind} {num.hex()} {tname.decode()}\n")
+                            print(f"{SHIFT}{kind} {num.hex()} {tname.decode()}\n")'''
 
                 commit_arr = []
                 for store in glob.iglob(path + "/.git/objects/??/*"):
