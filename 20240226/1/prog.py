@@ -74,8 +74,10 @@ while commands := sys.stdin.readline():
             else:
                 monster = Monster(commands[3])
                 try:
-                    commands[1] = int(commands[1]) % 10
-                    commands[2] = int(commands[2]) % 10
+                    commands[1] = int(commands[1])
+                    commands[2] = int(commands[2])
+                    if commands[1] >= 10 or commands[1] < 0 or commands[2] >= 10 or commands[2] < 0:
+                        raise ValueError
                 except:
                     print("Invalid arguments")
                     continue
