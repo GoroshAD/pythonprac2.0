@@ -22,7 +22,7 @@ class Cell:
     player = False
 
 def encounter(x, y):
-    print(cowsay(f"{field[(x, y)].monster.phrase}"))
+    print(cowsay(field[(x, y)].monster.phrase, cow=field[(x, y)].monster.name))
 
 for i in range(10):
     for j in range(10):
