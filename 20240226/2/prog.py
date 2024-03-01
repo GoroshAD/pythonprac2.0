@@ -1,4 +1,4 @@
-from cowsay import cowsay
+from cowsay import cowsay, list_cows
 import sys
 
 field = {}
@@ -89,6 +89,9 @@ while commands := sys.stdin.readline():
                         raise ValueError
                 except:
                     print("Invalid arguments")
+                    continue
+                if name not in list_cows():
+                    print("Cannot add unknown monster")
                     continue
                 monster = Monster(name, x, y, phrase)
                 flag = True if field[(x, y)].monster is not None else False
