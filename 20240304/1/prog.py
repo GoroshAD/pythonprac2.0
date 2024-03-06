@@ -29,6 +29,7 @@ for i in range(10):
         field[(i, j)] = Cell()
 field[(0, 0)].player = True
 
+print("<<< Welcome to Python-MUD 0.1 >>>")
 player = Player()
 while commands := sys.stdin.readline():
     commands = commands.split()
