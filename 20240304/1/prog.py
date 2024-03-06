@@ -1,5 +1,5 @@
 from cowsay import cowsay, list_cows
-import sys
+import sys, shlex
 
 field = {}
 class Monster:
@@ -32,7 +32,7 @@ field[(0, 0)].player = True
 print("<<< Welcome to Python-MUD 0.1 >>>")
 player = Player()
 while commands := sys.stdin.readline():
-    commands = commands.split()
+    commands = shlex.split(commands)
     length_commands = len(commands)
     match commands[0]:
         case "up":
