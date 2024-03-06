@@ -1,5 +1,20 @@
-from cowsay import cowsay, list_cows
+from cowsay import cowsay, list_cows, read_dot_cow
+from io import StringIO
 import sys, shlex
+
+JGSBAT = StringIO("""$the_cow = <<EOC;
+   $thoughts
+    $thoughts
+    ,_                    _,
+    ) '-._  ,_    _,  _.-' (
+    )  _.-'.| \\--//|.'-._  (
+     )'   .'\/o\/o\/'.   `(
+      ) .' . \====/ . '. (
+       )  / <<    >> \  (
+        '-._/``  ``\_.-'
+  jgs     __ \\'--'//__
+         (((""`  `"")))
+EOC""")
 
 field = {}
 class Monster:
@@ -24,7 +39,10 @@ class Cell:
     player = False
 
 def encounter(x, y):
-    print(cowsay(field[(x, y)].monster.phrase, cow=field[(x, y)].monster.name))
+    if monster.name == "jgsbat":
+        print(cowsay(field[(x, y)].monster.phrase, cowfile=read_dot_cow(JGSBAT)))
+    else:
+        print(cowsay(field[(x, y)].monster.phrase, cow=field[(x, y)].monster.name))
 
 for i in range(10):
     for j in range(10):
@@ -106,7 +124,7 @@ while commands := sys.stdin.readline():
                 except:
                     print("Invalid arguments")
                     continue
-                if name not in list_cows():
+                if name not in list_cows() and name != "jgsbat":
                     print("Cannot add unknown monster")
                     continue
                 monster = Monster(name, x, y, phrase, hp)
