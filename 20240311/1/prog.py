@@ -236,6 +236,8 @@ class Mud(cmd.Cmd):
         attack_func(args)
         pass
 
+    def complete_attack(self, text, line, begidx, endidx):
+        return [w for w in weapons if w.startswith(text)]
 
     def do_EOF(self, args):
         print("\n<<< Thank you for playing! >>>")
