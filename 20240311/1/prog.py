@@ -55,61 +55,62 @@ def encounter(x, y):
         print(cowsay(field[(x, y)].monster.phrase, cowfile=read_dot_cow(JGSBAT)))
     else:
         print(cowsay(field[(x, y)].monster.phrase, cow=field[(x, y)].monster.name))
+    return
 
 def up_func(args):
     if len(shlex.split(args)) > 0:
         print("Invalid arguments")
-        pass
+        return
     field[(player.x, player.y)].player = False
     player.y = (player.y - 1) % 10
     field[(player.x, player.y)].player = True
     print(f"Moved to {(player.x, player.y)}")
     if field[(player.x, player.y)].monster is not None:
         encounter(player.x, player.y)
-    pass
+    return
 
 def down_func(args):
     if len(shlex.split(args)) > 0:
         print("Invalid arguments")
-        pass
+        return
     field[(player.x, player.y)].player = False
     player.y = (player.y + 1) % 10
     field[(player.x, player.y)].player = True
     print(f"Moved to {(player.x, player.y)}")
     if field[(player.x, player.y)].monster is not None:
         encounter(player.x, player.y)
-    pass
+    return
 
 def left_func(args):
     if len(shlex.split(args)) > 0:
         print("Invalid arguments")
-        pass
+        return
     field[(player.x, player.y)].player = False
     player.x = (player.x - 1) % 10
     field[(player.x, player.y)].player = True
     print(f"Moved to {(player.x, player.y)}")
     if field[(player.x, player.y)].monster is not None:
         encounter(player.x, player.y)
-    pass
+    return
 
 def right_func(args):
     if len(shlex.split(args)) > 0:
         print("Invalid arguments")
-        pass
+        return
     field[(player.x, player.y)].player = False
     player.x = (player.x + 1) % 10
     field[(player.x, player.y)].player = True
     print(f"Moved to {(player.x, player.y)}")
     if field[(player.x, player.y)].monster is not None:
         encounter(player.x, player.y)
-    pass
+    return
 
 def addmon_func(args):
     commands = shlex.split(args)
     length_commands = len(commands)
     if length_commands != 8:
         print("Invalid arguments")
-        pass
+        return
     name, phrase = commands[0], ""
     x, y, hp = 0, 0, 0
     try:
@@ -134,17 +135,35 @@ def addmon_func(args):
             raise ValueError
     except:
         print("Invalid arguments")
-        pass
+        return
     if name not in list_cows() and name != "jgsbat":
         print("Cannot add unknown monster")
-        pass
+        return
     monster = Monster(name, x, y, phrase, hp)
     replaced_monster_flag = True if field[(x, y)].monster is not None else False
     field[(x, y)].monster = monster
     print(f"Added monster {name} to {(x, y)} saying {phrase}")
     if replaced_monster_flag:
         print("Replaced the old monster")
-    pass
+    return
+
+def attack_func(args):
+    if len(shlex.split(args)) > 0:
+        print("Invalid arguments")
+        return
+    if field[(player.x, player.y)].monster is None:
+        print("No monster here")
+        return
+    if field[(player.x, player.y)].monster.hp > 10:
+        print(f"Attacked {field[(player.x, player.y)].monster.name}, damage {10} hp")
+        field[(player.x, player.y)].monster.hp -= 10
+        print(f"{field[(player.x, player.y)].monster.name} now has {field[(player.x, player.y)].monster.hp}")
+
+    else:
+        print(f"Attacked {field[(player.x, player.y)].monster.name}, damage {field[(player.x, player.y)].monster.hp} hp")
+        print(f"{field[(player.x, player.y)].monster.name} died")
+        field[(player.x, player.y)].monster = None
+    return
 
 #Game main class.
 
@@ -192,6 +211,14 @@ class Mud(cmd.Cmd):
         Usage: addmon NAME [coords X Y] [hp HP] [hello HELLO]
         """
         addmon_func(args)
+        pass
+
+    def do_attack(self, args):
+        """
+        Attack the monster in the current cell.
+        Usage: attack
+        """
+        attack_func(args)
         pass
 
     def do_EOF(self, args):
