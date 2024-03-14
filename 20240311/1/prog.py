@@ -242,11 +242,12 @@ class Mud(cmd.Cmd):
 
     def complete_attack(self, text, line, begidx, endidx):
         tmp = shlex.split(line)
-        if len(tmp) == 1:
+        if len(tmp) == 2:
             return [m for m in list_cows() if m.startswith(text)]
-        elif len(tmp) == 3:
+        elif len(tmp) == 4:
             return [w for w in weapons if w.startswith(text)]
-        return "with" if "with".startswith(text)]
+        elif "with".startswith(text):
+            return ["with"]
 
     def do_EOF(self, args):
         print("\n<<< Thank you for playing! >>>")
