@@ -152,7 +152,7 @@ def addmon_func(args):
 def attack_func(args):
     commands = shlex.split(args)
     commands_length = len(commands)
-    if commands_length > 2:
+    if commands_length != 2 and commands_length != 0:
         print("Invalid arguments")
         return
     weapon = "sword"
