@@ -177,7 +177,7 @@ class Mud(cmd.Cmd):
     """
     Multi-user dungeon game!
     """
-    prompt = "o-(====>"
+    prompt = "o-(====> "
 
     def do_up(self, args):
         """
@@ -226,6 +226,9 @@ class Mud(cmd.Cmd):
         """
         attack_func(args)
         pass
+
+    def complete_attack(self, text, line, begidx, endidx):
+        return [m for m in list_cows() if m.startswith(text)]
 
     def do_EOF(self, args):
         print("\n<<< Thank you for playing! >>>")
