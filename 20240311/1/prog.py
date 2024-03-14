@@ -39,11 +39,16 @@ class Cell:
     player = False
 
 def encounter(x, y):
-    if monster.name == "jgsbat":
+    if field[(x, y)].monster.name == "jgsbat":
         print(cowsay(field[(x, y)].monster.phrase, cowfile=read_dot_cow(JGSBAT)))
     else:
         print(cowsay(field[(x, y)].monster.phrase, cow=field[(x, y)].monster.name))
 
+for i in range(10):
+    for j in range(10):
+        field[(i, j)] = Cell()
+field[(0, 0)].player = True
+player = Player()
 
 class Mud(cmd.Cmd):
     """
@@ -115,61 +120,57 @@ class Mud(cmd.Cmd):
             encounter(player.x, player.y)
         pass
 
-'''    def do_addmon(self, args):
+    def do_addmon(self, args):
         """
         Add monster to the board.
         Usage: addmon NAME [coords X Y] [hp HP] [hello HELLO]
         """
-if length_commands != 9:
-                print("Invalid arguments")
-            else:
-                name, phrase = commands[1], ""
-                x, y, hp = 0, 0, 0
-                try:
-                    i = 2
-                    while i < 9:
-                        match commands[i]:
-                            case "hello":
-                                phrase = commands[i + 1]
-                                i += 2
-                            case "hp":
-                                hp = commands[i + 1]
-                                i += 2
-                            case "coords":
-                                x, y = commands[i + 1], commands[i + 2]
-                                i += 3
-                            case _:
-                                raise ValueError
-                    hp = int(hp)
-                    x = int(x)
-                    y = int(y)
-                    if x >= 10 or x < 0 or y >= 10 or y < 0 or hp <= 0:
+        commands = shlex.split(args)
+        length_commands = len(commands)
+        if length_commands != 8:
+            print("Invalid arguments")
+            pass
+        name, phrase = commands[0], ""
+        x, y, hp = 0, 0, 0
+        try:
+            i = 1
+            while i < 8:
+                match commands[i]:
+                    case "hello":
+                        phrase = commands[i + 1]
+                        i += 2
+                    case "hp":
+                        hp = commands[i + 1]
+                        i += 2
+                    case "coords":
+                        x, y = commands[i + 1], commands[i + 2]
+                        i += 3
+                    case _:
                         raise ValueError
-                except:
-                    print("Invalid arguments")
-                    continue
-                if name not in list_cows() and name != "jgsbat":
-                    print("Cannot add unknown monster")
-                    continue
-                monster = Monster(name, x, y, phrase, hp)
-                flag = True if field[(x, y)].monster is not None else False
-                field[(x, y)].monster = monster
-                print(f"Added monster {name} to {(x, y)} saying {phrase}")
-                if flag:
-                    print("Replaced the old monster")
-        case _:
-            print("Invalid command")
-'''
+            hp = int(hp)
+            x = int(x)
+            y = int(y)
+            if x >= 10 or x < 0 or y >= 10 or y < 0 or hp <= 0:
+                raise ValueError
+        except:
+            print("Invalid arguments")
+            pass
+        if name not in list_cows() and name != "jgsbat":
+            print("Cannot add unknown monster")
+            pass
+        monster = Monster(name, x, y, phrase, hp)
+        replaced_monster_flag = True if field[(x, y)].monster is not None else False
+        field[(x, y)].monster = monster
+        print(f"Added monster {name} to {(x, y)} saying {phrase}")
+        if replaced_monster_flag:
+            print("Replaced the old monster")
+        pass
+
     def do_EOF(self, args):
+        print("\n<<< Thank you for playing! >>>")
         return True
 
 if __name__ == "__main__":
-    for i in range(10):
-        for j in range(10):
-            field[(i, j)] = Cell()
-    field[(0, 0)].player = True
     print("<<< Welcome to Python-MUD 0.1 >>>")
-    player = Player()
-
     Mud().cmdloop()
 
