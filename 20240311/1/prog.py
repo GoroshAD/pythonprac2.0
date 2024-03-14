@@ -19,6 +19,8 @@ JGSBAT = StringIO("""$the_cow = <<EOC;
 EOC""")
 
 field = {}
+weapons ={"sword": 10, "spear": 15, "axe": 20}
+
 class Monster:
     name = ""
     x = 0
@@ -148,17 +150,30 @@ def addmon_func(args):
     return
 
 def attack_func(args):
-    if len(shlex.split(args)) > 0:
+    commands = shlex.split(args)
+    commands_length = len(commands)
+    if commands_length > 2:
         print("Invalid arguments")
         return
+    weapon = "sword"
+    if commands_length > 0:
+        match commands[0]:
+            case "with":
+                weapon = commands[1]
+            case _:
+                print("Invalid arguments")
+                return
+    if weapon not in weapons:
+        print("Unknown weapon")
+        return
+    damage = weapons[weapon]
     if field[(player.x, player.y)].monster is None:
         print("No monster here")
         return
-    if field[(player.x, player.y)].monster.hp > 10:
-        print(f"Attacked {field[(player.x, player.y)].monster.name}, damage {10} hp")
-        field[(player.x, player.y)].monster.hp -= 10
+    if field[(player.x, player.y)].monster.hp > damage:
+        print(f"Attacked {field[(player.x, player.y)].monster.name}, damage {damage} hp")
+        field[(player.x, player.y)].monster.hp -= damage
         print(f"{field[(player.x, player.y)].monster.name} now has {field[(player.x, player.y)].monster.hp}")
-
     else:
         print(f"Attacked {field[(player.x, player.y)].monster.name}, damage {field[(player.x, player.y)].monster.hp} hp")
         print(f"{field[(player.x, player.y)].monster.name} died")
@@ -208,7 +223,7 @@ class Mud(cmd.Cmd):
     def do_addmon(self, args):
         """
         Add monster to the board.
-        Usage: addmon NAME [coords X Y] [hp HP] [hello HELLO]
+        Usage: addmon NAME coords X Y hp HP hello HELLO
         """
         addmon_func(args)
         pass
@@ -216,10 +231,11 @@ class Mud(cmd.Cmd):
     def do_attack(self, args):
         """
         Attack the monster in the current cell.
-        Usage: attack
+        Usage: attack [with WEAPON]
         """
         attack_func(args)
         pass
+
 
     def do_EOF(self, args):
         print("\n<<< Thank you for playing! >>>")
