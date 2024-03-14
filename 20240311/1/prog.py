@@ -148,11 +148,17 @@ def addmon_func(args):
     return
 
 def attack_func(args):
-    if len(shlex.split(args)) > 0:
+    commands = shlex.split(args)
+    commands_length = len(commands)
+    if commands_length != 1:
         print("Invalid arguments")
         return
-    if field[(player.x, player.y)].monster is None:
+    monster_name = commands[0]
+    if field[(player.x, player.y)].monster == None:
         print("No monster here")
+        return
+    if field[(player.x, player.y)].monster.name != monster_name:
+        print(f"No {monster_name} here")
         return
     if field[(player.x, player.y)].monster.hp > 10:
         print(f"Attacked {field[(player.x, player.y)].monster.name}, damage {10} hp")
@@ -216,7 +222,7 @@ class Mud(cmd.Cmd):
     def do_attack(self, args):
         """
         Attack the monster in the current cell.
-        Usage: attack
+        Usage: attack MONSTER_NAME
         """
         attack_func(args)
         pass
