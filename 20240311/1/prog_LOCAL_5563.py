@@ -152,28 +152,24 @@ def addmon_func(args):
 def attack_func(args):
     commands = shlex.split(args)
     commands_length = len(commands)
-    if commands_length != 3 and commands_length != 1:
+    if commands_length != 2 and commands_length != 0:
         print("Invalid arguments")
         return
     weapon = "sword"
-    monster_name = commands[0]
-    if commands_length > 1:
-        match commands[1]:
+    if commands_length > 0:
+        match commands[0]:
             case "with":
-                weapon = commands[2]
+                weapon = commands[1]
             case _:
                 print("Invalid arguments")
                 return
-    if field[(player.x, player.y)].monster is None:
-        print("No monster here")
-        return
-    if field[(player.x, player.y)].monster.name != monster_name:
-        print(f"No {monster_name} here")
-        return
     if weapon not in weapons:
         print("Unknown weapon")
         return
     damage = weapons[weapon]
+    if field[(player.x, player.y)].monster is None:
+        print("No monster here")
+        return
     if field[(player.x, player.y)].monster.hp > damage:
         print(f"Attacked {field[(player.x, player.y)].monster.name}, damage {damage} hp")
         field[(player.x, player.y)].monster.hp -= damage
@@ -190,7 +186,7 @@ class Mud(cmd.Cmd):
     """
     Multi-user dungeon game!
     """
-    prompt = "o-(====> "
+    prompt = "o-(====>"
 
     def do_up(self, args):
         """
@@ -235,18 +231,13 @@ class Mud(cmd.Cmd):
     def do_attack(self, args):
         """
         Attack the monster in the current cell.
-        Usage: attack MONSTER_NAME [with WEAPON]
+        Usage: attack [with WEAPON]
         """
         attack_func(args)
         pass
 
     def complete_attack(self, text, line, begidx, endidx):
-        tmp = shlex.split(line)
-        if len(tmp) == 1:
-            return [m for m in list_cows() if m.startswith(text)]
-        elif len(tmp) == 3:
-            return [w for w in weapons if w.startswith(text)]
-        return "with" if "with".startswith(text)]
+        return [w for w in weapons if w.startswith(text)]
 
     def do_EOF(self, args):
         print("\n<<< Thank you for playing! >>>")
