@@ -1,0 +1,59 @@
+--- file1.txt	2024-03-18 13:10:04.941309190 +0300
++++ file2.txt	2024-03-18 13:10:26.853040888 +0300
+@@ -88,12 +88,12 @@
+ root         101       2  0 12:50 ?        00:00:00 [mld]
+ root         102       2  0 12:50 ?        00:00:00 [kworker/2:1H-events_highpri]
+ root         103       2  0 12:50 ?        00:00:00 [ipv6_addrconf]
+-root         105       2  0 12:50 ?        00:00:01 [kworker/u16:3-i915]
++root         105       2  0 12:50 ?        00:00:01 [kworker/u16:3-events_power_efficient]
+ root         111       2  0 12:50 ?        00:00:00 [kstrp]
+ root         117       2  0 12:50 ?        00:00:00 [charger_manager]
+-root         136       2  0 12:50 ?        00:00:00 [kworker/1:1H-events_highpri]
++root         136       2  0 12:50 ?        00:00:00 [kworker/1:1H-kblockd]
+ root         140       2  0 12:50 ?        00:00:00 [kworker/7:1H-kblockd]
+-root         152       2  0 12:50 ?        00:00:00 [kworker/4:1H-events_highpri]
++root         152       2  0 12:50 ?        00:00:00 [kworker/4:1H-kblockd]
+ root         153       2  0 12:50 ?        00:00:00 [kworker/3:1H-events_highpri]
+ root         154       2  0 12:50 ?        00:00:00 [kworker/5:1H-events_highpri]
+ root         155       2  0 12:50 ?        00:00:00 [kworker/6:1H-kblockd]
+@@ -121,7 +121,7 @@
+ root         436       2  0 12:50 ?        00:00:00 [irq/142-iwlwifi:queue_3]
+ root         437       2  0 12:50 ?        00:00:00 [irq/143-iwlwifi:queue_4]
+ root         438       2  0 12:50 ?        00:00:00 [irq/144-iwlwifi:exception]
+-root         441       2  0 12:50 ?        00:00:00 [kworker/u16:7-events_power_efficient]
++root         441       2  0 12:50 ?        00:00:00 [kworker/u16:7-i915]
+ root         462       2  0 12:50 ?        00:00:00 [kworker/u17:1-rb_allocator]
+ root         464       2  0 12:50 ?        00:00:00 [cryptd]
+ systemd+     520       1  0 12:50 ?        00:00:02 /lib/systemd/systemd-oomd
+@@ -187,7 +187,7 @@
+ artiomka    1607    1472  0 12:51 ?        00:00:00 /usr/libexec/gvfsd-fuse /run/user/1000/gvfs -f
+ artiomka    1612    1472  0 12:51 ?        00:00:00 /usr/libexec/gnome-session-binary --systemd-service --session=ubuntu
+ artiomka    1631    1612  0 12:51 ?        00:00:00 /usr/libexec/at-spi-bus-launcher --launch-immediately
+-artiomka    1638    1472  6 12:51 ?        00:01:12 /usr/bin/gnome-shell
++artiomka    1638    1472  6 12:51 ?        00:01:13 /usr/bin/gnome-shell
+ artiomka    1640    1631  0 12:51 ?        00:00:00 /usr/bin/dbus-daemon --config-file=/usr/share/defaults/at-spi2/accessibility.conf --nofork --print-address 11 --address=unix:path=/run/user/1000/at-spi/bus
+ root        1662       2  0 12:51 ?        00:00:00 [krfcommd]
+ artiomka    1722    1482  0 12:51 ?        00:00:00 /snap/snapd-desktop-integration/83/usr/bin/snapd-desktop-integration
+@@ -240,7 +240,7 @@
+ root        2308       1  0 12:51 ?        00:00:01 /usr/libexec/fwupd/fwupd
+ root        2362       2  0 12:51 ?        00:00:00 [kworker/7:3-cgroup_destroy]
+ artiomka    2769    1612  0 12:52 ?        00:00:00 update-notifier
+-artiomka    2793    1472 14 12:52 ?        00:02:29 /home/artiomka/Telegram/Telegram
++artiomka    2793    1472 13 12:52 ?        00:02:29 /home/artiomka/Telegram/Telegram
+ artiomka    2864    1638  0 12:52 ?        00:00:01 /usr/bin/Xwayland :0 -rootless -noreset -accessx -core -auth /run/user/1000/.mutter-Xwaylandauth.NOI3K2 -listen 4 -listen 5 -displayfd 6 -initfd 7
+ artiomka    2885    1472  0 12:52 ?        00:00:00 /usr/libexec/gsd-xsettings
+ artiomka    2918    1472  0 12:52 ?        00:00:00 /usr/libexec/ibus-x11
+@@ -263,10 +263,11 @@
+ lp          4003     819  0 13:00 ?        00:00:00 /usr/lib/cups/notifier/dbus dbus://
+ root        4052       2  0 13:02 ?        00:00:00 [kworker/6:2-events]
+ root        4053       2  0 13:02 ?        00:00:00 [kworker/u17:0-rb_allocator]
+-root        4073       2  0 13:03 ?        00:00:00 [kworker/1:2-i915-unordered]
++root        4073       2  0 13:03 ?        00:00:00 [kworker/1:2-events]
+ root        4096       2  0 13:04 ?        00:00:00 [kworker/2:2-mm_percpu_wq]
+ root        4097       2  0 13:04 ?        00:00:00 [kworker/5:2-events]
+ root        4117       2  0 13:06 ?        00:00:00 [kworker/4:2-events]
+ root        4135       2  0 13:08 ?        00:00:00 [kworker/7:0-events]
+ root        4153       2  0 13:08 ?        00:00:00 [kworker/u17:2-i915_flip]
+-artiomka    4162    3608  0 13:10 pts/0    00:00:00 ps -ef
++root        4165       2  0 13:10 ?        00:00:00 [kworker/1:0-i915-unordered]
++artiomka    4171    3608  0 13:10 pts/0    00:00:00 ps -ef
