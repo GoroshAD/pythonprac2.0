@@ -27,19 +27,19 @@ def move_func(args, dest):
         return
     match dest:
         case "up":
-            self.socket.sendall((" ".join(["move", "0", "-1"])).encode())
+            self.socket.sendall((f"move {0} {-1}").encode())
         case "down":
-            self.socket.sendall((" ".join(["move", "0", "1"])).encode())
+            self.socket.sendall((f"move {0} {1}").encode())
         case "left":
-            self.socket.sendall((" ".join(["move", "-1", "0"])).encode())
+            self.socket.sendall((f"move {-1} {0}").encode())
         case "right":
-            self.socket.sendall((" ".join(["move", "1", "0"])).encode())
+            self.socket.sendall((f"move {1} {0}").encode())
         case _:
             print("Invalid arguments")
             return
     answer = shlex.split(self.s.recv(1024).rstrip().decode())
     print(f"Moved to {(answer[0], answer[1])}")
-    if len(answer) == 4:
+    if answer[2] is not None:
         if answer[2] == "jgsbat":
         print(cowsay(answer[3], cowfile=read_dot_cow(JGSBAT)))
     else:
@@ -80,7 +80,7 @@ def addmon_func(args):
     if name not in list_cows() and name != "jgsbat":
         print("Cannot add unknown monster")
         return
-    self.socket.sendall((f"{name} {x} {y} {hello} {hp}")).encode())
+    self.socket.sendall((f"addmon {name} {x} {y} {hello} {hp}")).encode())
     answer = shlex.split(self.s.recv(1024).rstrip().decode())
     print(f"Added monster {name} to {(x, y)} saying {phrase}")
     if answer[0]:
@@ -106,7 +106,7 @@ def attack_func(args):
         print("Unknown weapon")
         return
     damage = weapons[weapon]
-    self.socket.sendall((f"{monster_name} {damage}")).encode())
+    self.socket.sendall((f"attack {monster_name} {damage}")).encode())
     answer = shlex.split(self.s.recv(1024).rstrip().decode())
     if not answer[0]:
         print(f"No {monster_name} here")
