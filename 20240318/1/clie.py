@@ -1,4 +1,5 @@
 import cmd, sys, socket, shlex
+import cowsay
 
 #Constants
 
@@ -41,6 +42,47 @@ def move_func(args, dest):
         print(cowsay(answer[3], cowfile=read_dot_cow(JGSBAT)))
     else:
         print(cowsay(answer[3], cow=answer[2]))
+    return
+
+def addmon_func(args):
+    commands = shlex.split(args)
+    length_commands = len(commands)
+    if length_commands != 8:
+        print("Invalid arguments")
+        return
+    name, phrase = commands[0], ""
+    x, y, hp = 0, 0, 0
+    try:
+        i = 1
+        while i < 8:
+            match commands[i]:
+                case "hello":
+                    phrase = commands[i + 1]
+                    i += 2
+                case "hp":
+                    hp = commands[i + 1]
+                    i += 2
+                case "coords":
+                    x, y = commands[i + 1], commands[i + 2]
+                    i += 3
+                case _:
+                    raise ValueError
+        hp = int(hp)
+        x = int(x)
+        y = int(y)
+        if x >= 10 or x < 0 or y >= 10 or y < 0 or hp <= 0:
+            raise ValueError
+    except:
+        print("Invalid arguments")
+        return
+    if name not in list_cows() and name != "jgsbat":
+        print("Cannot add unknown monster")
+        return
+    self.socket.sendall((f"{name} {x} {y} {hello} {hp}")).encode())
+    answer = shlex.split(self.s.recv(1024).rstrip().decode())
+    print(f"Added monster {name} to {(x, y)} saying {phrase}")
+    if answer[0]:
+        print("Replaced the old monster")
     return
 
 #Game main class.
