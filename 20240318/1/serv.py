@@ -56,7 +56,11 @@ def serve(conn, addr):
                         monster_phrase = field[(player.x, player.y)].monster.phrase
                     conn.sendall(f"{player.x} {player.y} {monster_name} {monster_phrase}").encode())
                 case "addmon":
-                    conn.sendall(str(addr[0]).encode() if inf[1] == "host" else str(addr[1]).encode())
+                    name, x, y, phrase, hp = inf[1:]
+                    monster = Monster(name, x, y, phrase, hp)
+                    replaced_monster_flag = True if field[(x, y)].monster is not None else False
+                    field[(x, y)].monster = monster
+                    conn.sendall((f"{replaced_monster_flag}").encode())
                 case "attack":
 
                 case _:
