@@ -1,5 +1,21 @@
 import cmd, sys, socket, shlex
 
+#Constants
+
+JGSBAT = StringIO("""$the_cow = <<EOC;
+   $thoughts
+    $thoughts
+    ,_                    _,
+    ) '-._  ,_    _,  _.-' (
+    )  _.-'.| \\--//|.'-._  (
+     )'   .'\/o\/o\/'.   `(
+      ) .' . \====/ . '. (
+       )  / <<    >> \  (
+        '-._/``  ``\_.-'
+  jgs     __ \\'--'//__
+         (((""`  `"")))
+EOC""")
+
 #Game client's functions.
 
 def move_func(args, dest):
@@ -18,7 +34,13 @@ def move_func(args, dest):
         case _:
             print("Invalid arguments")
             return
-    print(self.s.recv(1024).rstrip().decode())
+    answer = shlex.split(self.s.recv(1024).rstrip().decode())
+    print(f"Moved to {(answer[0], answer[1])}")
+    if len(answer) == 4:
+        if answer[2] == "jgsbat":
+        print(cowsay(answer[3], cowfile=read_dot_cow(JGSBAT)))
+    else:
+        print(cowsay(answer[3], cow=answer[2]))
     return
 
 #Game main class.
