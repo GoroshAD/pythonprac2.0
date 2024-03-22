@@ -1,0 +1,72 @@
+From 717f06d95d84e4a58b5a40d64ce0f07de5fe8f67 Mon Sep 17 00:00:00 2001
+From: Franky <nikto8748@gmail.com>
+Date: Fri, 22 Mar 2024 20:10:42 +0300
+Subject: [PATCH 4/8] Added attack to client.
+
+---
+ 20240318/1/clie.py | 35 ++++++++++++++++++++++++++++++++++-
+ 1 file changed, 34 insertions(+), 1 deletion(-)
+
+diff --git a/20240318/1/clie.py b/20240318/1/clie.py
+index 609580e..82675ca 100644
+--- a/20240318/1/clie.py
++++ b/20240318/1/clie.py
+@@ -1,7 +1,7 @@
+ import cmd, sys, socket, shlex
+ import cowsay
+ 
+-#Constants
++#Constants and dictionaries
+ 
+ JGSBAT = StringIO("""$the_cow = <<EOC;
+    $thoughts
+@@ -17,6 +17,8 @@ JGSBAT = StringIO("""$the_cow = <<EOC;
+          (((""`  `"")))
+ EOC""")
+ 
++weapons ={"sword": 10, "spear": 15, "axe": 20}
++
+ #Game client's functions.
+ 
+ def move_func(args, dest):
+@@ -85,6 +87,37 @@ def addmon_func(args):
+         print("Replaced the old monster")
+     return
+ 
++def attack_func(args):
++    commands = shlex.split(args)
++    commands_length = len(commands)
++    if commands_length != 3 and commands_length != 1:
++        print("Invalid arguments")
++        return
++    weapon = "sword"
++    monster_name = commands[0]
++    if commands_length > 1:
++        match commands[1]:
++            case "with":
++                weapon = commands[2]
++            case _:
++                print("Invalid arguments")
++                return
++    if weapon not in weapons:
++        print("Unknown weapon")
++        return
++    damage = weapons[weapon]
++    self.socket.sendall((f"{monster_name} {damage}")).encode())
++    answer = shlex.split(self.s.recv(1024).rstrip().decode())
++    if not answer[0]:
++        print(f"No {monster_name} here")
++        return
++    print(f"Attacked {monster_name}, damage {answer[1]} hp")
++    if answer[2] == 0:
++        print(f"{monster_name} died")
++    else:
++        print(f"{monster_name} now has {answer[2]}")
++    return
++
+ #Game main class.
+ 
+ class Mud(cmd.Cmd):
+-- 
+2.34.1
+

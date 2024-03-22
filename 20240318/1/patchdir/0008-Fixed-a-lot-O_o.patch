@@ -1,0 +1,218 @@
+From 003e95555d9f01aad88f0bdbf76190effadafdd7 Mon Sep 17 00:00:00 2001
+From: Franky <nikto8748@gmail.com>
+Date: Fri, 22 Mar 2024 22:25:38 +0300
+Subject: [PATCH 8/8] Fixed a lot O_o.
+
+---
+ 20240318/1/clie.py | 61 +++++++++++++++++++++++-----------------------
+ 20240318/1/serv.py | 12 ++++-----
+ 2 files changed, 37 insertions(+), 36 deletions(-)
+
+diff --git a/20240318/1/clie.py b/20240318/1/clie.py
+index c918b91..7e2fdbb 100644
+--- a/20240318/1/clie.py
++++ b/20240318/1/clie.py
+@@ -1,5 +1,6 @@
+ import cmd, sys, socket, shlex
+-import cowsay
++from cowsay import cowsay, list_cows, read_dot_cow
++from io import StringIO
+ 
+ #Constants and dictionaries
+ 
+@@ -21,32 +22,32 @@ weapons ={"sword": 10, "spear": 15, "axe": 20}
+ 
+ #Game client's functions.
+ 
+-def move_func(args, dest):
++def move_func(args, dest, socket):
+     if len(shlex.split(args)) > 0:
+         print("Invalid arguments")
+         return
+     match dest:
+         case "up":
+-            self.socket.sendall((f"move {0} {-1}").encode())
++            socket.sendall((f"move {0} {-1}").encode())
+         case "down":
+-            self.socket.sendall((f"move {0} {1}").encode())
++            socket.sendall((f"move {0} {1}").encode())
+         case "left":
+-            self.socket.sendall((f"move {-1} {0}").encode())
++            socket.sendall((f"move {-1} {0}").encode())
+         case "right":
+-            self.socket.sendall((f"move {1} {0}").encode())
++            socket.sendall((f"move {1} {0}").encode())
+         case _:
+             print("Invalid arguments")
+             return
+-    answer = shlex.split(self.s.recv(1024).rstrip().decode())
+-    print(f"Moved to {(answer[0], answer[1])}")
+-    if answer[2] is not None:
++    answer = shlex.split(socket.recv(1024).rstrip().decode())
++    print(f"Moved to {(int(answer[0]), int(answer[1]))}")
++    if answer[2] != "None": #encounter
+         if answer[2] == "jgsbat":
+-        print(cowsay(answer[3], cowfile=read_dot_cow(JGSBAT)))
+-    else:
+-        print(cowsay(answer[3], cow=answer[2]))
++            print(cowsay(answer[3], cowfile=read_dot_cow(JGSBAT)))
++        else:
++            print(cowsay(answer[3], cow=answer[2]))
+     return
+ 
+-def addmon_func(args):
++def addmon_func(args, socket):
+     commands = shlex.split(args)
+     length_commands = len(commands)
+     if length_commands != 8:
+@@ -80,14 +81,14 @@ def addmon_func(args):
+     if name not in list_cows() and name != "jgsbat":
+         print("Cannot add unknown monster")
+         return
+-    self.socket.sendall((f"addmon {name} {x} {y} {hello} {hp}")).encode())
+-    answer = shlex.split(self.s.recv(1024).rstrip().decode())
++    socket.sendall((f"addmon {name} {x} {y} {phrase} {hp}").encode())
++    answer = shlex.split(socket.recv(1024).rstrip().decode())
+     print(f"Added monster {name} to {(x, y)} saying {phrase}")
+-    if answer[0]:
++    if eval(answer[0]):
+         print("Replaced the old monster")
+     return
+ 
+-def attack_func(args):
++def attack_func(args, socket):
+     commands = shlex.split(args)
+     commands_length = len(commands)
+     if commands_length != 3 and commands_length != 1:
+@@ -106,16 +107,16 @@ def attack_func(args):
+         print("Unknown weapon")
+         return
+     damage = weapons[weapon]
+-    self.socket.sendall((f"attack {monster_name} {damage}")).encode())
+-    answer = shlex.split(self.s.recv(1024).rstrip().decode())
+-    if not answer[0]:
++    socket.sendall((f"attack {monster_name} {damage}").encode())
++    answer = shlex.split(socket.recv(1024).rstrip().decode())
++    if not eval(answer[0]):
+         print(f"No {monster_name} here")
+         return
+-    print(f"Attacked {monster_name}, damage {answer[1]} hp")
+-    if answer[2] == 0:
++    print(f"Attacked {monster_name}, damage {int(answer[1])} hp")
++    if int(answer[2]) == 0:
+         print(f"{monster_name} died")
+     else:
+-        print(f"{monster_name} now has {answer[2]}")
++        print(f"{monster_name} now has {int(answer[2])}")
+     return
+ 
+ #Game main class.
+@@ -136,7 +137,7 @@ class Mud(cmd.Cmd):
+         Go up on the board.
+         Usage: up
+         """
+-        move_func(args, "up")
++        move_func(args, "up", self.socket)
+         pass
+     
+     def do_down(self, args):
+@@ -144,7 +145,7 @@ class Mud(cmd.Cmd):
+         Go down on the board.
+         Usage: down
+         """
+-        move_func(args, "down")
++        move_func(args, "down", self.socket)
+         pass
+ 
+     def do_left(self, args):
+@@ -152,7 +153,7 @@ class Mud(cmd.Cmd):
+         Go left on the board.
+         Usage: left
+         """
+-        move_func(args, "left")
++        move_func(args, "left", self.socket)
+         pass
+     
+     def do_right(self, args):
+@@ -160,7 +161,7 @@ class Mud(cmd.Cmd):
+         Go right on the board.
+         Usage: right
+         """
+-        move_func(args, "right")
++        move_func(args, "right", self.socket)
+         pass
+ 
+     def do_addmon(self, args):
+@@ -168,7 +169,7 @@ class Mud(cmd.Cmd):
+         Add monster to the board.
+         Usage: addmon NAME coords X Y hp HP hello HELLO
+         """
+-        addmon_func(args)
++        addmon_func(args, self.socket)
+         pass
+ 
+     def do_attack(self, args):
+@@ -176,7 +177,7 @@ class Mud(cmd.Cmd):
+         Attack the monster in the current cell.
+         Usage: attack MONSTER_NAME [with WEAPON]
+         """
+-        attack_func(args)
++        attack_func(args, self.socket)
+         pass
+ 
+     def complete_attack(self, text, line, begidx, endidx):
+@@ -195,7 +196,7 @@ class Mud(cmd.Cmd):
+ if __name__ == "__main__":
+     print("<<< Welcome to Python-MUD 0.1 >>>")
+     host = "localhost" if len(sys.argv) < 2 else sys.argv[1]
+-    port = 1337 if len(sys.argv) < 3 else int(sys.argv[2])
++    port = 1338 if len(sys.argv) < 3 else int(sys.argv[2])
+     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+         s.connect((host, port))
+         Mud(s).cmdloop()
+diff --git a/20240318/1/serv.py b/20240318/1/serv.py
+index c27f998..7c20fb5 100644
+--- a/20240318/1/serv.py
++++ b/20240318/1/serv.py
+@@ -3,7 +3,7 @@ import multiprocessing, shlex, sys, socket
+ #Constants and dictionaries.
+ 
+ host = "localhost" if len(sys.argv) < 2 else sys.argv[1]
+-port = 1337 if len(sys.argv) < 3 else int(sys.argv[2])
++port = 1338 if len(sys.argv) < 3 else int(sys.argv[2])
+ field = {}
+ 
+ #Necessary classes.
+@@ -47,16 +47,16 @@ def serve(conn, addr):
+             match inf[0]:
+                 case "move":
+                     field[(player.x, player.y)].player = False
+-                    player.x = (player.x + inf[1]) % 10
+-                    player.y = (player.y + inf[2]) % 10
++                    player.x = (player.x + int(inf[1])) % 10
++                    player.y = (player.y + int(inf[2])) % 10
+                     field[(player.x, player.y)].player = True
+                     monster_name, monster_phrase = None, None
+                     if field[(player.x, player.y)].monster is not None:
+                         monster_name = field[(player.x, player.y)].monster.name
+                         monster_phrase = field[(player.x, player.y)].monster.phrase
+-                    conn.sendall(f"{player.x} {player.y} {monster_name} {monster_phrase}").encode())
++                    conn.sendall((f"{player.x} {player.y} {monster_name} {monster_phrase}").encode())
+                 case "addmon":
+-                    name, x, y, phrase, hp = inf[1:]
++                    name, x, y, phrase, hp = inf[1], int(inf[2]), int(inf[3]), inf[4], int(inf[5])
+                     monster = Monster(name, x, y, phrase, hp)
+                     replaced_monster_flag = True if field[(x, y)].monster is not None else False
+                     field[(x, y)].monster = monster
+@@ -66,7 +66,7 @@ def serve(conn, addr):
+                             field[(player.x, player.y)].monster.name != inf[1]:
+                         conn.sendall((f"{False}").encode())
+                     else:
+-                        damage = inf[2]
++                        damage = int(inf[2])
+                         if field[(player.x, player.y)].monster.hp > damage:
+                             field[(player.x, player.y)].monster.hp -= damage
+                             conn.sendall((f"{True} {damage} {field[(player.x, player.y)].monster.hp}").encode())
+-- 
+2.34.1
+

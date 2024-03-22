@@ -1,0 +1,36 @@
+From c784401d3abcea06deb5794057c12d2280535a51 Mon Sep 17 00:00:00 2001
+From: Franky <nikto8748@gmail.com>
+Date: Fri, 22 Mar 2024 20:34:01 +0300
+Subject: [PATCH 7/8] Added attack to server.
+
+---
+ 20240318/1/serv.py | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
+
+diff --git a/20240318/1/serv.py b/20240318/1/serv.py
+index 871f634..c27f998 100644
+--- a/20240318/1/serv.py
++++ b/20240318/1/serv.py
+@@ -62,7 +62,18 @@ def serve(conn, addr):
+                     field[(x, y)].monster = monster
+                     conn.sendall((f"{replaced_monster_flag}").encode())
+                 case "attack":
+-
++                    if field[(player.x, player.y)].monster is None or \
++                            field[(player.x, player.y)].monster.name != inf[1]:
++                        conn.sendall((f"{False}").encode())
++                    else:
++                        damage = inf[2]
++                        if field[(player.x, player.y)].monster.hp > damage:
++                            field[(player.x, player.y)].monster.hp -= damage
++                            conn.sendall((f"{True} {damage} {field[(player.x, player.y)].monster.hp}").encode())
++                        else:
++                            damage = field[(player.x, player.y)].monster.hp
++                            field[(player.x, player.y)].monster = None
++                            conn.sendall((f"{True} {damage} {0}").encode())
+                 case _:
+                     pass
+ 
+-- 
+2.34.1
+

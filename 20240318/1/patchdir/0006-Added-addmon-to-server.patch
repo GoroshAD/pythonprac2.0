@@ -1,0 +1,29 @@
+From d56ea8ec651e5a1ed81aa8a65bcc6f4441deccf6 Mon Sep 17 00:00:00 2001
+From: Franky <nikto8748@gmail.com>
+Date: Fri, 22 Mar 2024 20:26:08 +0300
+Subject: [PATCH 6/8] Added addmon to server.
+
+---
+ 20240318/1/serv.py | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/20240318/1/serv.py b/20240318/1/serv.py
+index 6338447..871f634 100644
+--- a/20240318/1/serv.py
++++ b/20240318/1/serv.py
+@@ -56,7 +56,11 @@ def serve(conn, addr):
+                         monster_phrase = field[(player.x, player.y)].monster.phrase
+                     conn.sendall(f"{player.x} {player.y} {monster_name} {monster_phrase}").encode())
+                 case "addmon":
+-                    conn.sendall(str(addr[0]).encode() if inf[1] == "host" else str(addr[1]).encode())
++                    name, x, y, phrase, hp = inf[1:]
++                    monster = Monster(name, x, y, phrase, hp)
++                    replaced_monster_flag = True if field[(x, y)].monster is not None else False
++                    field[(x, y)].monster = monster
++                    conn.sendall((f"{replaced_monster_flag}").encode())
+                 case "attack":
+ 
+                 case _:
+-- 
+2.34.1
+
