@@ -3,7 +3,7 @@ import multiprocessing, shlex, sys, socket
 #Constants and dictionaries.
 
 host = "localhost" if len(sys.argv) < 2 else sys.argv[1]
-port = 1337 if len(sys.argv) < 3 else int(sys.argv[2])
+port = 1338 if len(sys.argv) < 3 else int(sys.argv[2])
 field = {}
 
 #Necessary classes.
@@ -47,16 +47,16 @@ def serve(conn, addr):
             match inf[0]:
                 case "move":
                     field[(player.x, player.y)].player = False
-                    player.x = (player.x + inf[1]) % 10
-                    player.y = (player.y + inf[2]) % 10
+                    player.x = (player.x + int(inf[1])) % 10
+                    player.y = (player.y + int(inf[2])) % 10
                     field[(player.x, player.y)].player = True
                     monster_name, monster_phrase = None, None
                     if field[(player.x, player.y)].monster is not None:
                         monster_name = field[(player.x, player.y)].monster.name
                         monster_phrase = field[(player.x, player.y)].monster.phrase
-                    conn.sendall(f"{player.x} {player.y} {monster_name} {monster_phrase}").encode())
+                    conn.sendall((f"{player.x} {player.y} {monster_name} {monster_phrase}").encode())
                 case "addmon":
-                    name, x, y, phrase, hp = inf[1:]
+                    name, x, y, phrase, hp = inf[1], int(inf[2]), int(inf[3]), inf[4], int(inf[5])
                     monster = Monster(name, x, y, phrase, hp)
                     replaced_monster_flag = True if field[(x, y)].monster is not None else False
                     field[(x, y)].monster = monster
@@ -66,7 +66,7 @@ def serve(conn, addr):
                             field[(player.x, player.y)].monster.name != inf[1]:
                         conn.sendall((f"{False}").encode())
                     else:
-                        damage = inf[2]
+                        damage = int(inf[2])
                         if field[(player.x, player.y)].monster.hp > damage:
                             field[(player.x, player.y)].monster.hp -= damage
                             conn.sendall((f"{True} {damage} {field[(player.x, player.y)].monster.hp}").encode())
