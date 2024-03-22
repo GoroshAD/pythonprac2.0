@@ -1,7 +1,7 @@
 import cmd, sys, socket, shlex
 import cowsay
 
-#Constants
+#Constants and dictionaries
 
 JGSBAT = StringIO("""$the_cow = <<EOC;
    $thoughts
@@ -16,6 +16,8 @@ JGSBAT = StringIO("""$the_cow = <<EOC;
   jgs     __ \\'--'//__
          (((""`  `"")))
 EOC""")
+
+weapons ={"sword": 10, "spear": 15, "axe": 20}
 
 #Game client's functions.
 
@@ -83,6 +85,37 @@ def addmon_func(args):
     print(f"Added monster {name} to {(x, y)} saying {phrase}")
     if answer[0]:
         print("Replaced the old monster")
+    return
+
+def attack_func(args):
+    commands = shlex.split(args)
+    commands_length = len(commands)
+    if commands_length != 3 and commands_length != 1:
+        print("Invalid arguments")
+        return
+    weapon = "sword"
+    monster_name = commands[0]
+    if commands_length > 1:
+        match commands[1]:
+            case "with":
+                weapon = commands[2]
+            case _:
+                print("Invalid arguments")
+                return
+    if weapon not in weapons:
+        print("Unknown weapon")
+        return
+    damage = weapons[weapon]
+    self.socket.sendall((f"{monster_name} {damage}")).encode())
+    answer = shlex.split(self.s.recv(1024).rstrip().decode())
+    if not answer[0]:
+        print(f"No {monster_name} here")
+        return
+    print(f"Attacked {monster_name}, damage {answer[1]} hp")
+    if answer[2] == 0:
+        print(f"{monster_name} died")
+    else:
+        print(f"{monster_name} now has {answer[2]}")
     return
 
 #Game main class.
